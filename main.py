@@ -129,13 +129,6 @@ async def callback_query(call: types.CallbackQuery):
         target = User.get_or_create(call.from_user)
         if post.can_be_accessed_by(call.from_user, PostMode[mode]):
             logger.info('#' + post_id + ': ' + get_formatted_username_or_id(call.from_user) + ' - access granted')
-            await bot.send_message(
-    post.author.user_id,
-    f"👤 تم فتح الهمسة\n\n"
-    f"الاسم: {call.from_user.full_name}\n"
-    f"Username: @{call.from_user.username if call.from_user.username else 'لا يوجد'}\n"
-    f"ID: {call.from_user.id}"
-            )
             await call.answer(post.content
                 .replace('{username}', get_formatted_username_or_id(call.from_user))
                 .replace('{uid}', 'id' + str(target.user_id))
@@ -154,6 +147,13 @@ async def callback_query(call: types.CallbackQuery):
                 True)
         else:
             logger.info('#' + post_id + ': ' + get_formatted_username_or_id(call.from_user) + ' - access denied')
+            await bot.send_message(
+                post.author.user_id,
+                f"👤 تم فتح الهمسة\n\n"
+                f"الاسم: {call.from_user.full_name}\n"
+                f"Username: @{call.from_user.username if call.from_user.username else 'لا يوجد'}\n"
+                f"ID: {call.from_user.id}"
+            )
             await call.answer(locales[call.from_user.language_code].not_allowed, True)
     except Exception as e:
         logger.error(e)
@@ -161,6 +161,51 @@ async def callback_query(call: types.CallbackQuery):
             'cannot handle callback query from ' +
             get_formatted_username_or_id(call.from_user) +
             ' with payload: "' + call.data + '"')
+
+@dp.message_handler(commands=['users'])
+async def users_command(message: types.Message):
+    try:
+        if message.from_user.id != 7973374194:
+            return
+
+        users = list(User.select().order_by(User.first_interaction_time))
+
+        total_users = len(users)
+
+        if total_users == 0:
+            await message.answer('👥 لا يوجد مستخدمون مسجلون في قاعدة البيانات.')
+            return
+
+        header = f"👥 إجمالي مستخدمي البوت: {total_users}\n\n"
+
+        current_message = header
+
+        for index, user in enumerate(users, start=1):
+            username = '@' + user.username if user.username else 'لا يوجد'
+
+            user_text = (
+                f"{index}. 👤 {user.first_name}"
+                f"{' ' + user.last_name if user.last_name else ''}\n"
+                f"   Username: {username}\n"
+                f"   ID: {user.user_id}\n"
+                f"   أول استخدام: {user.first_interaction_time}\n"
+                f"   آخر استخدام: {user.last_interaction_time}\n"
+                f"   Inline: {user.inline_queries_count}\n"
+                f"   محادثة خاصة: {'نعم' if user.has_dialog else 'لا'}\n\n"
+            )
+
+            if len(current_message) + len(user_text) > 3900:
+                await message.answer(current_message)
+                current_message = user_text
+            else:
+                current_message += user_text
+
+        if current_message:
+            await message.answer(current_message)
+
+    except Exception as e:
+        logger.error(e)
+        await message.answer('❌ حدث خطأ أثناء جلب قائمة المستخدمين.')
 
 @dp.message_handler()
 async def send_info(message: types.Message):
