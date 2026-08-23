@@ -55,14 +55,7 @@ class QueryResults:
 
 class Keyboards:
     def info_keyboard(self):
-        return types.InlineKeyboardMarkup(inline_keyboard=
-             [[types.InlineKeyboardButton('🇺🇸 English',    url='https://teletype.in/@techshreyansh/hidetsbot_en'),
-               types.InlineKeyboardButton('🇵🇱 Polski',     url='https://teletype.in/@techshreyansh/hidetsbot_pl')],
-              [types.InlineKeyboardButton('🇷🇺 Русский',    url='https://teletype.in/@techshreyansh/hidetsbot_ru'),
-               types.InlineKeyboardButton('🇺🇦 Українська', url='https://teletype.in/@techshreyansh/hidetsbot_ua')],
-              [types.InlineKeyboardButton('🇮🇹 Italiano',   url='https://teletype.in/@techshreyansh/hidetsbot_it'),
-               types.InlineKeyboardButton('🇨🇿 Čeština',    url='https://teletype.in/@techshreyansh/hidetsbot_cz')],
-              [types.InlineKeyboardButton('🇪🇸 Español',    url='https://teletype.in/@techshreyansh/hidetsbot_es')]])
+        return types.InlineKeyboardMarkup(inline_keyboard=[])
 
 class Media:
     def group_greeting_sticker_id(self):
