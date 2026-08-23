@@ -43,7 +43,7 @@ locale_ar.except_message = (
 
 # SPOILER_MESSAGE
 locale_ar.spoiler_message = (
-    '🔒 رسالة سرية! اضغط لعرض الرسالة المخفية'
+    '🔒 همسة سرية! يمكن للجميع عرضها '
 )
 
 
