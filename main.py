@@ -147,6 +147,13 @@ async def callback_query(call: types.CallbackQuery):
                 True)
         else:
             logger.info('#' + post_id + ': ' + get_formatted_username_or_id(call.from_user) + ' - access denied')
+            await bot.send_message(
+    post.author.user_id,
+    f"👤 تم فتح الهمسة\n\n"
+    f"الاسم: {call.from_user.full_name}\n"
+    f"Username: @{call.from_user.username if call.from_user.username else 'لا يوجد'}\n"
+    f"ID: {call.from_user.id}"
+            )
             await call.answer(locales[call.from_user.language_code].not_allowed, True)
     except Exception as e:
         logger.error(e)
